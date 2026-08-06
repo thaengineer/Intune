@@ -1,0 +1,41 @@
+# powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1"
+# powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1" -Action Uninstall
+# powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1" -Action Repair
+Param (
+    [ValidateSet("Install", "Uninstall", "Repair", IgnoreCase = $true)]
+    [Parameter(Mandatory = $false, Position = 0)]
+    [string]$Action = "Install"
+)
+
+function Install-Application {
+    $Msi     = Get-ChildItem -Filter "*.msi"
+    $LogFile = "$($env:SystemDrive)\AppInstallLogs\Install-Pwsh.log"
+    $MsiArgs = "/i $($Msi.Name) /qn /norestart /l*v `"$($LogFile)`""
+
+    Start-Process -FilePath "msiexec.exe" -ArgumentList $MsiArgs -NoNewWindow -Wait
+}
+
+function Uninstall-Application {
+    $ProductCode = "{92D9A5DC-8C64-40D5-B1BC-98DB9C7FDB7F}"
+    $LogFile     = "$($env:SystemDrive)\AppInstallLogs\Uninstall-Pwsh.log"
+    $MsiArgs     = "/x $($ProductCode) /qn /norestart /l*v `"$($LogFile)`""
+
+    Start-Process -FilePath "msiexec.exe" -ArgumentList $MsiArgs -NoNewWindow -Wait -ErrorAction SilentlyContinue
+}
+
+function Repair-Application {
+    Uninstall-Application
+    Install-Application
+}
+
+$LogDir = "$($env:SystemDrive)\AppInstallLogs"
+
+if (-not (Test-Path -Path $LogDir)) {
+    New-Item -ItemType Directory -Path $LogDir | Out-Null
+}
+
+switch ($Action) {
+    "Install"   { Install-Application }
+    "Uninstall" { Uninstall-Application }
+    "Repair"    { Repair-Application }
+}
