@@ -1,0 +1,85 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# PowerShell specific
+*.pssc
+*.psd1.bak
+*.psm1.bak
+*.ps1.bak
+*.ps1xml.bak
+
+# Logs & temp
+*.log
+*.tmp
+*.temp
+*.cache
+temp/
+tmp/
+logs/
+
+# Local / secrets (common patterns)
+*.local.ps1
+*secrets*.ps1
+*credential*.ps1
+*password*.ps1
+.env
+.env.*
+*.pfx
+*.pem
+*.key
+
+# Build / publish artifacts (if you ever use them)
+# bin/
+obj/
+publish/
+out/
+dist/
+
+# Test results
+TestResults/
+*.trx
+coverage/
+*.coveragexml
+
+# Node (if you ever mix in any JS tooling)
+node_modules/
+
