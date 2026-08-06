@@ -1,0 +1,16 @@
+Import-Module -Name PSMSI
+
+$UpgradeCode = (New-Guid).Guid.ToUpper()
+
+New-Installer -ProductName "Liquit Collection Member Mgmt" -UpgradeCode $UpgradeCode -Manufacturer 'None' -Content {
+    New-InstallerDirectory -PredefinedDirectoryName 'ProgramFilesFolder' -Content {
+        New-InstallerDirectory -DirectoryName "Liquit Collection Member Mgmt" -Id 'InstallDir' -Content {
+            New-InstallerFile -Source '.\FILE_ONE'
+            New-InstallerFile -Source '.\FILE_TWO' -Id "Main"
+        }
+    }
+    New-InstallerDirectory -PredefinedDirectory 'DesktopFolder' -Content {
+        New-InstallerShortcut -Name "Liquit Collection Member Mgmt" -FileId "Main" -WorkingDirectoryId 'InstallDir' -IconPath '.\icon.ico'
+    }
+} -OutputDirectory (Join-Path $PSScriptRoot "setup")
+
