@@ -21,6 +21,9 @@ git config --global push.autoSetupRemote true # local/remote branch upstream tra
 
 # verify globals
 git config --global --list
+
+# switch back to https
+git config --global --unset-all url."git@github.com:".insteadOf "https://github.com/"
 ```
 
 #### Initialize repo
