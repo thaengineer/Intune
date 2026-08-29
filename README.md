@@ -18,12 +18,6 @@ Win32 app packages, ADMX templates, Graph helpers, and packaging tooling — org
 
 ## Features
 
-|  | Feature |
-| --- | --- |
-| [x] | Win32App App Packaging |
-| [ ] | ADMX Template Import/Configuration |
-| [ ] | More to come |
-
 - [x] Win32App App Packaging
 - [ ] ADMX Template Import/Configuration
 - [ ] More to come
