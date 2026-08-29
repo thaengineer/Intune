@@ -1,53 +1,66 @@
-# work in progress, probably gonna make a bunch of changes
-param (
-    [Parameter(Mandatory = $true, Position = 0)]
-    [string]$TenantID,
+Import-Module IntuneWin32App
+Import-Module "$($PSScriptRoot)\Modules\ImportDotEnv"
 
-    [Parameter(Mandatory = $true, Position = 1)]
-    [string]$ClientID,
+Set-DotEnv -Path "$($PSScriptRoot)\.env"
 
-    [Parameter(Mandatory = $false, Position = 2)]
-    $IntunewinFile = Get-ChildItem -Filter "*.intunewin",
-
-    [Parameter(Mandatory = $false, Position = 3)]
-    [string]$DetectionFilePath = "$((Get-Location).Path)\detection.ps1",
-
-    [Parameter(Mandatory = $false, Position = 4)]
-    [string]IconFilePath = "$((Get-Location).Path)\icon.jpg"
+$Scopes = @(
+    "DeviceManagementApps.ReadWrite.All"
 )
 
-Import-Module IntuneWin32App
-
-
 $Params = @{
-    TenantID = $TenantID
-    ClientID = $ClientID
+    TenantID     = $env:TenantID
+    ClientID     = $env:ClientID
+    ClientSecret = $env:ClientSecret
+    Scopes       = $Scopes
 }
 
 Connect-MSIntuneGraph @Params
 
+Push-Location -Path "$($PSScriptRoot)\..\packages"
 
-$Detection   = New-IntuneWin32AppDetectionRuleScript -ScriptFile $DetectionFilePath -EnforceSignatureCheck $false -RunAs32Bit $true
-$Requirement = New-IntuneWin32AppRequirementRule -Architecture x64x86 -MinimumSupportedWindowsRelease W10_1607
-$Icon        = New-IntuneWin32AppIcon -FilePath $IconFilePath
+Get-ChildItem | Where-Object { $_.PSIsContainer } | ForEach-Object {
+    Push-Location -Path $_
 
-$Params = @{
-    FilePath                         = $IntunewinFile.FullName
-    DisplayName                      = "Test"
-    Description                      = "Test"
-    Publisher                        = "Test"
-    AppVersion                       = "1.0"
-    CompanyPortalFeaturedApp         = $false
-    Icon                             = $Icon
-    InstallCommandLine               = "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File `"setup.ps1`""
-    UninstallCommandLine             = "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File `"setup.ps1`" -Action Uninstall"
-    InstallExperience                = "system"
-    RestartBehavior                  = "suppress"
-    MaximumInstallationTimeInMinutes = 5
-    AllowAvailableUninstall          = $true
-    DetectionRule                    = $Detection
-    RequirementRule                  = $Requirement
+    $Intunewin = Get-ChildItem -Filter "*.intunewin"
+    $Manifest  = Get-ChildItem -Filter "manifest.json"
+    $App       = Get-Content $Manifest.FullName -Raw | ConvertFrom-Json
+
+    # skip package creation if there's no .intunewin
+    if (-not $Intunewin) { continue }
+
+    $Detection   = New-IntuneWin32AppDetectionRuleScript -ScriptFile "$((Get-Location).Path)\$($App.Detection.Script)" -EnforceSignatureCheck $App.Detection.EnforceSignatureCheck -RunAs32Bit $App.Detection.RunAs32Bit
+    $Requirement = New-IntuneWin32AppRequirementRule -Architecture $App.Requirements.Architecture -MinimumSupportedWindowsRelease $App.Requirements.MinSupportedWinRelease # W10_1607
+    $IconFile    = Get-ChildItem -Path (Get-Location).Path | Where-Object { $_.Extension -match "\.(ico|jpg|jpeg|png)" }
+
+    $Params = [ordered]@{
+        FilePath                         = $Intunewin.FullName
+        DisplayName                      = $App.Application.Name
+        Description                      = $App.Application.Description
+        Publisher                        = $App.Application.Publisher
+        AppVersion                       = $App.Application.Version
+        CompanyPortalFeaturedApp         = $App.Application.FeaturedApp
+        Owner                            = $App.Application.Owner
+        Developer                        = $App.Application.Developer
+        InstallCommandLine               = ($App.Install.Command, $App.Install.Arguments -join " ")
+        UninstallCommandLine             = ($App.Uninstall.Command, $App.Uninstall.Arguments -join " ")
+        InstallExperience                = $App.Install.Context
+        RestartBehavior                  = $App.Install.RestartBehavior
+        MaximumInstallationTimeInMinutes = $App.Install.TimeoutMinutes
+        AllowAvailableUninstall          = $App.Application.AllowAvailableUninstall
+        DetectionRule                    = $Detection
+        RequirementRule                  = $Requirement
+    }
+
+    if ($IconFile) {
+        $Icon = New-IntuneWin32AppIcon -FilePath $IconFile.FullName -ErrorAction SilentlyContinue
+        $Params["Icon"] = $Icon
+    }
+
+    $Params
+
+    Add-IntuneWin32App @Params
+    Pop-Location
 }
 
-Add-IntuneWin32App @Params
+Pop-Location
 

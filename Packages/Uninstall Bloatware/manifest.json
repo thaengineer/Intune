@@ -1,0 +1,33 @@
+{
+  "Application": {
+    "Name": "Uninstall Bloatware",
+    "Version": "1.0.0.0",
+    "Description": "This removes unnecessary bloatware.",
+    "Publisher": "TheLab",
+    "Developer": "TheLab",
+    "Owner": "TheLab",
+    "FeaturedApp": false,
+    "AllowAvailableUninstall": true
+  },
+  "Install": {
+    "Command": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File \"setup.ps1\"",
+    "Arguments": "-Action Install",
+    "Context": "System",
+    "RestartBehavior": "Suppress",
+    "TimeoutMinutes": 60
+  },
+  "Uninstall": {
+    "Command": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File \"setup.ps1\"",
+    "Arguments": "-Action Uninstall"
+  },
+  "Detection": {
+    "Type": "PowerShell",
+    "Script": "detection.ps1",
+    "RunAs32Bit": false,
+    "EnforceSignatureCheck": false
+  },
+  "Requirements": {
+    "Architecture": "x64x86",
+    "MinSupportedWinRelease": "W11_22H2"
+  }
+}

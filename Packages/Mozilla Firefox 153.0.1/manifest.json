@@ -1,0 +1,33 @@
+{
+  "Application": {
+    "Name": "Mozilla Firefox",
+    "Version": "153.0.1",
+    "Description": "Firefox is a free and open-source web browser developed by the Mozilla Foundation.",
+    "Publisher": "Mozilla",
+    "Developer": "Mozilla",
+    "Owner": "TheLab",
+    "FeaturedApp": false,
+    "AllowAvailableUninstall": true
+  },
+  "Install": {
+    "Command": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File \"setup.ps1\"",
+    "Arguments": "-Action Install",
+    "Context": "System",
+    "RestartBehavior": "Suppress",
+    "TimeoutMinutes": 60
+  },
+  "Uninstall": {
+    "Command": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File \"setup.ps1\"",
+    "Arguments": "-Action Uninstall"
+  },
+  "Detection": {
+    "Type": "PowerShell",
+    "Script": "detection.ps1",
+    "RunAs32Bit": false,
+    "EnforceSignatureCheck": false
+  },
+  "Requirements": {
+    "Architecture": "x64x86",
+    "MinSupportedWinRelease": "W11_22H2"
+  }
+}
