@@ -24,9 +24,13 @@ Get-ChildItem | Where-Object { $_.PSIsContainer } | ForEach-Object {
     $Intunewin = Get-ChildItem -Filter "*.intunewin"
     $Manifest  = Get-ChildItem -Filter "manifest.json"
     $App       = Get-Content $Manifest.FullName -Raw | ConvertFrom-Json
+    $Win32App  = Get-IntuneWin32App | Where-Object { $_.DisplayName -eq $App.Application.Name }
 
     # skip package creation if there's no .intunewin
     if (-not $Intunewin) { continue }
+
+    # skip package creation if package exists
+    if ($Win32App) { continue }
 
     $Detection   = New-IntuneWin32AppDetectionRuleScript -ScriptFile "$((Get-Location).Path)\$($App.Detection.Script)" -EnforceSignatureCheck $App.Detection.EnforceSignatureCheck -RunAs32Bit $App.Detection.RunAs32Bit
     $Requirement = New-IntuneWin32AppRequirementRule -Architecture $App.Requirements.Architecture -MinimumSupportedWindowsRelease $App.Requirements.MinSupportedWinRelease # W10_1607
