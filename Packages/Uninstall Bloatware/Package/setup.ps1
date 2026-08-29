@@ -1,8 +1,7 @@
 # powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1"
 # powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1" -Action Uninstall
-# powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1" -Action Repair
 Param (
-    [ValidateSet("Install", "Uninstall", "Repair")]
+    [ValidateSet("Install", "Uninstall", IgnoreCase = $true)]
     [Parameter(Mandatory = $false, Position = 0)]
     [string]$Action = "Install"
 )
@@ -46,11 +45,8 @@ function Uninstall-Application {
     }
 }
 
-function Repair-Application {
-}
-
 switch ($Action) {
     "Install"   { Install-Application }
     "Uninstall" { Uninstall-Application }
-    "Repair"    { Repair-Application }
 }
+
