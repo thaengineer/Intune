@@ -5,7 +5,7 @@ Intune Platform Config &amp; Automation
 
 Win32 app packages, ADMX templates, Graph helpers, and packaging tooling — organized so you can wrap an installer, detect it, and ship it to Intune without reinventing the folder layout every time.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/thaengineer/Intune/blob/main/LICENSE)
 [![PowerShell](https://img.shields.io/badge/PowerShell-5.1-blue.svg)](https://github.com/PowerShell/PowerShell)
 [![Intune](https://img.shields.io/badge/Microsoft-Intune-0078D4.svg)](https://intune.microsoft.com)
 
