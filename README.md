@@ -1,13 +1,32 @@
-# Intune
-Intune Platform Config &amp; Automation
+<h1 align="center">
+  Microsoft Intune Platform Config &amp; Automation
+</h1>
 
-**Platform configuration and automation for Microsoft Intune.**
+<p align="center">
+Win32 app packages, ADMX templates, Graph helpers, and packaging tooling — organized so you can wrap an installer, detect it, and ship it to Intune without reinventing the wheel.
+</p>
 
-Win32 app packages, ADMX templates, Graph helpers, and packaging tooling — organized so you can wrap an installer, detect it, and ship it to Intune without reinventing the folder layout every time.
+<p align="center">
+  <a href="#"><img alt="License" src="https://img.shields.io/github/license/thaengineer/Intune?color=blue"></a>
+  <a href="https://intune.microsoft.com"><img alt="Intune" src="https://img.shields.io/badge/Microsoft-Intune-blue"></a>
+  <a href="https://github.com/PowerShell/PowerShell"><img alt="PowerShell" src="https://img.shields.io/badge/Powershell-5.1-blue"></a>
+  <a href="#"><img alt="Repo Size" src="https://img.shields.io/github/repo-size/thaengineer/Intune?color=green"></a>
+  <a href="#"><img alt="Last Commit" src="https://img.shields.io/github/last-commit/thaengineer/Intune?color=green"></a>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://raw.githubusercontent.com/thaengineer/Intune/refs/heads/main/LICENSE)
-[![PowerShell](https://img.shields.io/badge/PowerShell-5.1-blue.svg)](https://github.com/PowerShell/PowerShell)
-[![Intune](https://img.shields.io/badge/Microsoft-Intune-0078D4.svg)](https://intune.microsoft.com)
+---
+
+## Features
+
+|  | Feature |
+| --- | --- |
+| [x] | Win32App App Packaging |
+| [ ] | ADMX Template Import/Configuration |
+| [ ] | More to come |
+
+- [x] Win32App App Packaging
+- [ ] ADMX Template Import/Configuration
+- [ ] More to come
 
 ---
 
@@ -15,28 +34,29 @@ Win32 app packages, ADMX templates, Graph helpers, and packaging tooling — org
 
 | Path | Purpose |
 | --- | --- |
-| [`Packages/`](Packages) | Ready-to-wrap Win32 apps. Each app has a `Package/` payload, `detection.ps1`, and an icon. |
-| [`Scripts/`](Scripts) | Packaging, Graph auth, module bootstrap, MDM diagnostics, deferred install UX. |
-| [`admx/`](admx) | Administrative templates for **Firefox** and **Microsoft Edge** (plus Edge Update / WebView2). |
+| [`Packages/`](packages) | Win32App Templates |
+| [`Scripts/`](scripts) | Packaging / Configuration (MS Graph), MS Graph Bootstrap Module, MDM Diagnostics, Deferred Install UX. |
+| [`admx/`](admx) | Administrative Templates |
 | [`bin/`](bin) | Microsoft `IntuneWinAppUtil.exe` and `IntuneWinAppUtilDecoder.exe`. |
-| [`Assets/`](Assets) | Branding / wallpaper source files. |
+| [`Assets/`](Assets) | Branding / Wallpaper source files. |
 
 ---
 
-## Package convention
+## Package Convention
 
-Every Win32 app under `Packages/` follows the same shape:
+Every Win32App under [`Packages/`](packages) follows the same shape:
 
 ```text
-Packages/<App Name> <Version>/
+Packages/<App Name>/
 ├── Package/              # source folder passed to IntuneWinAppUtil
-│   ├── setup.ps1         # Install | Uninstall | Repair
-│   └── <installer bits>  # exe, msi, cab, policies.json, …
+│   ├── setup.ps1         # Install | Uninstall
+│   └── <installer bits>  # exe, msi, cab, policies.json, ...
 ├── detection.ps1         # Intune detection rule (script)
-└── icon.png              # Company Portal icon
+├── <image>.png           # Win32App Icon
+└── manifest.json         # Win32App Package Details
 ```
 
-`setup.ps1` always accepts `-Action Install|Uninstall|Repair` (default `Install`). Intune command lines:
+`setup.ps1` always accepts `-Action Install|Uninstall` (defaults to `Install`).
 
 ```powershell
 # Install
@@ -46,46 +66,14 @@ powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1"
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1" -Action Uninstall
 ```
 
-### Current packages
-
-| Package | Notes |
-| --- | --- |
-| **7-Zip 26.02** | Silent `/S` install. Uninstall via `Uninstall.exe`. |
-| **CMTrace 5.00.9078.1000** | Ships the CMTrace binary in `Package/`. |
-| **Company Portal** | Icon only (Store / Microsoft app assignment). |
-| **Mozilla Firefox 153.0.1** | Silent install via `install.ini`, then drops `policies.json` into `distribution\`. |
-| **Mozilla Firefox ESR 140.13.0** | Same pattern as release Firefox, ESR channel. |
-| **Orca 10.1.28000.2526** | MSI + supporting CABs. |
-| **PowerShell x64 7.6.4** | Silent install wrapper. |
-| **Uninstall Bloatware** | Removes a fixed list of inbox Appx packages (Solitaire, Clipchamp-adjacent inbox apps, Your Phone, etc.). |
-
-Firefox packages copy enterprise `policies.json` to:
-
-```text
-C:\Program Files\Mozilla Firefox\distribution\policies.json
-```
-
-That is the supported way to lock settings without relying on GPO on every device.
-
 ---
 
 ## Scripts
 
-### Packaging and publish
-
 | Script | What it does |
 | --- | --- |
-| [`Scripts/New-Intunewin.ps1`](Scripts/New-Intunewin.ps1) | Runs `IntuneWinAppUtil.exe` against `.\Package` with `setup.ps1` as the setup file, then renames `setup.intunewin` to the parent folder name. |
-| [`Scripts/New-IntuneWin32App.ps1`](Scripts/New-IntuneWin32App.ps1) | Uploads a `.intunewin` to Intune via the [IntuneWin32App](https://github.com/MSEndpointMgr/IntuneWin32App) module. Detection script + icon + requirement rule (x86/x64, Windows 10 1607+). Marked work-in-progress. |
-
-Typical wrap from a package folder (adjust the util path if you are not on the lab drive):
-
-```powershell
-# from Packages/<App>/
-& "$PSScriptRoot\..\..\bin\IntuneWinAppUtil.exe" -c .\Package -s .\Package\setup.ps1 -o .\
-```
-
-`New-Intunewin.ps1` currently points at `Z:\IntuneLab\bin\IntuneWinAppUtil.exe`. Change that path, or call `bin\IntuneWinAppUtil.exe` from this repo instead.
+| [`Scripts/New-Intunewin.ps1`](Scripts/New-Intunewin.ps1) | Runs `IntuneWinAppUtil.exe` against `.\Package` with `setup.ps1` as the setup file. |
+| [`Scripts/New-IntuneWin32App.ps1`](Scripts/New-IntuneWin32App.ps1) | Uploads a `.intunewin` to Intune via the [IntuneWin32App](https://github.com/MSEndpointMgr/IntuneWin32App) module. |
 
 ### Graph and workstation setup
 
@@ -95,14 +83,16 @@ Typical wrap from a package folder (adjust the util path if you are not on the l
 | [`Scripts/Install-MSGraph.ps1`](Scripts/Install-MSGraph.ps1) | Resolves the latest `Microsoft.Graph` version from the Gallery and installs it. |
 | [`Scripts/Test-MSGraph.ps1`](Scripts/Test-MSGraph.ps1) | Loads `.env` via `ImportDotEnv`, connects with client-secret credentials, prints `Get-MgContext`. |
 | [`Scripts/Export-MDMDiagnostics.ps1`](Scripts/Export-MDMDiagnostics.ps1) | Dumps MDM diagnostics to the desktop (`mdm\`) plus area CABs: Autopilot, DeviceEnrollment, DeviceProvisioning, OsConfiguration, Tpm. |
+| - | - |
 
 ### Helpers
 
 | Path | What it does |
 | --- | --- |
 | [`Scripts/modules/ImportDotEnv`](Scripts/modules/ImportDotEnv) | `Import-DotEnv` / `Set-DotEnv` — parse a `.env` file into process environment variables. |
-| [`Scripts/deferred-setup`](Scripts/deferred-setup) | Toast-style deferral UI (`ToastHelper`) plus a sample progress `setup.ps1`. Lets a user postpone an install a few times before it runs. |
-| [`Scripts/make-msi`](Scripts/make-msi) | Templates for wrapping files into an MSI (`PSMSI`) and compiling a script to an exe (`ps2exe`). Placeholders, not production product names. |
+| [`Scripts/deferred-setup`](Scripts/deferred-setup) | Toast-style deferral UI (`ToastHelper`) plus a sample progress `setup.ps1`. (**work in progress**) |
+| [`Scripts/make-msi`](Scripts/make-msi) | Templates for wrapping files into an MSI (`PSMSI`) and compiling a script to an exe (`ps2exe`). (**work in progress**) |
+| [ ] | |
 
 ---
 
@@ -111,7 +101,7 @@ Typical wrap from a package folder (adjust the util path if you are not on the l
 ### Prerequisites
 
 - Windows 10/11 admin workstation
-- PowerShell 5.1 
+- PowerShell 5.1
 - An Entra ID app registration with Intune / Graph application permissions if you publish via Graph
 - This repo cloned locally
 
@@ -179,4 +169,3 @@ Pair Firefox ADMX with the `policies.json` already baked into the Firefox Win32 
 ## Disclaimer
 
 Scripts and packages are provided **as-is**. Test in a lab or pilot ring before production.
-
