@@ -6,7 +6,7 @@ Intune Platform Config &amp; Automation
 Win32 app packages, ADMX templates, Graph helpers, and packaging tooling — organized so you can wrap an installer, detect it, and ship it to Intune without reinventing the folder layout every time.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207-blue.svg)](https://github.com/PowerShell/PowerShell)
+[![PowerShell](https://img.shields.io/badge/PowerShell-5.1-blue.svg)](https://github.com/PowerShell/PowerShell)
 [![Intune](https://img.shields.io/badge/Microsoft-Intune-0078D4.svg)](https://intune.microsoft.com)
 
 ---
@@ -20,7 +20,6 @@ Win32 app packages, ADMX templates, Graph helpers, and packaging tooling — org
 | [`admx/`](admx) | Administrative templates for **Firefox** and **Microsoft Edge** (plus Edge Update / WebView2). |
 | [`bin/`](bin) | Microsoft `IntuneWinAppUtil.exe` and `IntuneWinAppUtilDecoder.exe`. |
 | [`Assets/`](Assets) | Branding / wallpaper source files. |
-| [`git.md`](git.md) | Personal Git + SSH setup notes. |
 
 ---
 
@@ -112,7 +111,7 @@ Typical wrap from a package folder (adjust the util path if you are not on the l
 ### Prerequisites
 
 - Windows 10/11 admin workstation
-- PowerShell 5.1 or 7+
+- PowerShell 5.1 
 - An Entra ID app registration with Intune / Graph application permissions if you publish via Graph
 - This repo cloned locally
 
@@ -173,39 +172,11 @@ Then either upload the `.intunewin` in the Intune admin center, or run `New-Intu
 
 Import these into Intune as **Imported administrative templates (Preview)** or stage them in a Central Store if you still use on-prem GPO.
 
-```text
-admx/
-├── firefox/          # firefox.admx/.adml + mozilla.admx/.adml
-└── msedge/           # msedge, msedgeupdate, msedgewebview2
-```
-
 Pair Firefox ADMX with the `policies.json` already baked into the Firefox Win32 packages when you want settings that survive even if ADMX import is delayed.
-
----
-
-## Assets and tooling
-
-- [`Assets/windows-11-4k-lockscreen.jpg`](Assets/windows-11-4k-lockscreen.jpg) — 4K lock screen source.
-- [`bin/IntuneWinAppUtil.exe`](bin/IntuneWinAppUtil.exe) — Microsoft Win32 content prep tool.
-- [`bin/IntuneWinAppUtilDecoder.exe`](bin/IntuneWinAppUtilDecoder.exe) — decode an existing `.intunewin` for inspection.
-
----
-
-## Security notes
-
-- Never commit `.env`, client secrets, `.pfx`, or `.pem` files. `.gitignore` already covers the usual patterns.
-- `Test-MSGraph.ps1` and `New-IntuneWin32App.ps1` authenticate as an app. Treat that registration like a service account: least privilege, secret rotation, no user-delegated tokens in this repo.
-- Detection and install scripts run as **SYSTEM** when assigned as Win32 apps. Do not add interactive UI to `setup.ps1` unless you intentionally stage a user-context helper (see `deferred-setup`).
-- Vendor binaries (`IntuneWinAppUtil.exe`, CMTrace, Orca CABs, browser installers you drop into `Package/`) are third-party. Verify hashes from the vendor before you trust a new drop.
 
 ---
 
 ## Disclaimer
 
-Scripts and packages are provided **as-is**. Test in a lab or pilot ring before production. Installer versions pinned in folder names will go stale — bump the folder, `setup.ps1`, and `detection.ps1` together when you refresh a package.
+Scripts and packages are provided **as-is**. Test in a lab or pilot ring before production.
 
----
-
-## License
-
-[MIT](LICENSE) © Stephen
