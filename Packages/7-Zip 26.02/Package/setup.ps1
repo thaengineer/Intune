@@ -1,42 +1,42 @@
 # powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1"
 # powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1" -Action Uninstall
-# powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1" -Action Repair
 Param (
-    [ValidateSet("Install", "Uninstall", "Repair", IgnoreCase = $true)]
+    [ValidateSet("Install", "Uninstall", IgnoreCase = $true)]
     [Parameter(Mandatory = $false, Position = 0)]
     [string]$Action = "Install"
 )
 
 function Install-Application {
-    $Exe     = Get-ChildItem -Filter "*.exe"
-    $ExeArgs = "/S"
+    $Exe    = Get-ChildItem -Filter "*.exe"
+    $Params = [ordered]@{
+        FilePath     = $Exe.FullName
+        ArgumentList = "/S"
+        NoNewWindow  = $true
+        Wait         = $true
+        PassThru     = $true
+    }
 
-    Start-Process -FilePath $Exe.FullName -ArgumentList $ExeArgs -NoNewWindow -Wait
+    $Proc = Start-Process @Params
+    exit $Proc.ExitCode
 }
 
 function Uninstall-Application {
-    $Exes = @(
-        "$($env:ProgramFiles)\7-Zip\Uninstall.exe",
-        "$(${env:ProgramFiles(x86)})\7-Zip\Uninstall.exe"
-    )
-
-    $Exes | ForEach-Object {
-        if (Test-Path -Path $_) {
-            $ExeArgs = "/S"
-
-            Get-Process | Where-Object { $_.Path -match "7-Zip" } | Stop-Process -Force
-            Start-Process -FilePath $_ -ArgumentList $ExeArgs -NoNewWindow -Wait
-        }
+    $Exe = "$($env:ProgramFiles)\7-Zip\Uninstall.exe"
+    $Params = [ordered]@{
+        FilePath     = $_
+        ArgumentList = "/S"
+        NoNewWindow  = $true
+        Wait         = $true
+        PassThru     = $true
+        ErrorAction  = "SilentlyContinue"
     }
-}
 
-function Repair-Application {
-    Uninstall-Application
-    Install-Application
+    Get-Process | Where-Object { $_.Path -match "7-Zip" } | Stop-Process -Force
+    $Proc = Start-Process @Params
+    exit $Proc.ExitCode
 }
 
 switch ($Action) {
     "Install"   { Install-Application }
     "Uninstall" { Uninstall-Application }
-    "Repair"    { Repair-Application }
 }
