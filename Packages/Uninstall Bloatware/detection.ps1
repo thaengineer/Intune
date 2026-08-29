@@ -31,7 +31,7 @@ $Apps | ForEach-Object {
     }
 }
 
-if ($Count -eq 0) {
+if ($Count -eq $Apps.Count) {
     Write-Host "INSTALLED"
     exit 0
 } else {

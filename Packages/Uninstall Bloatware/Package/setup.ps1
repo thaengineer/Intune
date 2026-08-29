@@ -2,13 +2,12 @@
 # powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1" -Action Uninstall
 # powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "setup.ps1" -Action Repair
 Param (
-    [ValidateSet("Install", "Uninstall", "Repair", IgnoreCase = $true)]
+    [ValidateSet("Install", "Uninstall", "Repair")]
     [Parameter(Mandatory = $false, Position = 0)]
     [string]$Action = "Install"
 )
 
 function Install-Application {
-    Uninstall-Application
 }
 
 function Uninstall-Application {
@@ -39,17 +38,15 @@ function Uninstall-Application {
     )
 
     $Apps | ForEach-Object {
-        try {
-            Get-AppxPackage -Name $_ | Remove-AppxPackage -ErrorAction Stop
-        } catch {
-            Write-Host $_.Exception.Message
+        $Package = Get-AppxPackage -Name $_ -ErrorAction SilentlyContinue
+
+        if ($Package) {
+            Remove-AppxPackage -Package $Package.PackageFullName -ErrorAction SilentlyContinue
         }
     }
 }
 
 function Repair-Application {
-    Uninstall-Application
-    Install-Application
 }
 
 switch ($Action) {
