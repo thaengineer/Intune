@@ -15,4 +15,3 @@ $Modules | Foreach-Object {
 
     Install-Module @Params
 }
-
