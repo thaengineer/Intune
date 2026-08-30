@@ -60,8 +60,6 @@ Get-ChildItem | Where-Object { $_.PSIsContainer } | ForEach-Object {
         $Params["Icon"] = $Icon
     }
 
-    $Params
-
     Add-IntuneWin32App @Params
     Pop-Location
 }

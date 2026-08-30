@@ -1,0 +1,34 @@
+{
+  "Application": {
+    "Name": "Adobe Acrobat Reader",
+    "Version": "26.001.21662",
+    "Description": "Adobe Acrobat Reader is a PDF viewer and printer.",
+    "Publisher": "Microsoft",
+    "Developer": "Microsoft",
+    "Owner": "TheLab",
+    "FeaturedApp": false,
+    "AllowAvailableUninstall": true
+  },
+  "Install": {
+    "Command": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File \"setup.ps1\"",
+    "Arguments": "-Action Install",
+    "Context": "System",
+    "RestartBehavior": "Suppress",
+    "TimeoutMinutes": 60
+  },
+  "Uninstall": {
+    "Command": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File \"setup.ps1\"",
+    "Arguments": "-Action Uninstall"
+  },
+  "Detection": {
+    "Type": "PowerShell",
+    "Script": "detection.ps1",
+    "RunAs32Bit": false,
+    "EnforceSignatureCheck": false
+  },
+  "Requirements": {
+    "Architecture": "x64x86",
+    "MinSupportedWinRelease": "W11_22H2"
+  }
+}
+

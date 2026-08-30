@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-Win32 app packages, ADMX templates, Graph helpers, and packaging tooling — organized so you can wrap an installer, detect it, and ship it to Intune without reinventing the wheel.
+Win32App Package Templates &amp Tooling, ADMX Templates, Graph Helpers — organized so you can wrap an installer, detect it, and ship it to Intune without reinventing the wheel.
 </p>
 
 <p align="center">
@@ -46,8 +46,8 @@ Packages/<App Name>/
 │   ├── setup.ps1         # Install | Uninstall
 │   └── <installer bits>  # exe, msi, cab, policies.json, ...
 ├── detection.ps1         # Intune detection rule (script)
-├── <image>.png           # Win32App Icon
-└── manifest.json         # Win32App Package Details
+├── <image>.png           # App Icon
+└── manifest.json         # Package Details
 ```
 
 `setup.ps1` always accepts `-Action Install|Uninstall` (defaults to `Install`).
