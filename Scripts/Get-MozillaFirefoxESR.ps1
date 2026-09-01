@@ -11,5 +11,5 @@ Get-ChildItem -Path $PkgDir -Filter "*.yaml" | Remove-Item -Force
 $Exe     = Get-ChildItem -Path $PkgDir -Filter "*.exe"
 $Version = ($Exe.Name | Select-String -Pattern "\d+(\.\d+){1,3}").Matches.Value
 
-Rename-Item -Path $Exe.FullName -NewName "Mozilla Firefox ESR $($Version).exe" -Force
+Rename-Item -Path $Exe.FullName -NewName "Mozilla Firefox $($Version)esr.exe" -Force
 
