@@ -26,6 +26,11 @@ git config --global --list
 git config --global --unset-all url."git@github.com:".insteadOf "https://github.com/"
 ```
 
+#### Check what .gitignore excludes
+```bash
+git status --ignored
+```
+
 #### Initialize repo
 ```bash
 git init
