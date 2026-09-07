@@ -160,6 +160,5 @@ Pair Firefox ADMX with the `policies.json` already baked into the Firefox Win32 
 
 ---
 
-## Disclaimer
-
-Scripts and packages are provided **as-is**. Test in a lab or pilot ring before production.
+> [!IMPORTANT]
+> The code in this repository is provided **as-is** with no guarantee of any kind. Always be sure to review code and test before running in production.
