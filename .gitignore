@@ -15,4 +15,28 @@
 !*.psd1
 !*.psm1
 !LICENSE
+!admx
+!firefox
+!msedge
+!assets
+!bin
+!packages
+!scripts
+!make-msi
+!modules
+!Package
+!Source
+!7-Zip
+!Google Chrome
+!Orca
+!Uninstall Bloatware
+!Adobe Acrobat Reader
+!Microsoft Edge
+!Powershell 7
+!CMTrace
+!Microsoft WebView2
+!Quick Assist
+!Company Portal
+!Mozilla Firefox ESR
+!Template
 
