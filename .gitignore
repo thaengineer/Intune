@@ -1,44 +1,20 @@
 *
-!*.adm
-!*.adml
-!*.admx
-!*.cab
-!*.exe
-!*.ini
-!*.jpg
-!*.json
+
+!admx/
+!admx/**
+!assets/
+!assets/**
+!bin/
+!bin/**
+!packages/
+!packages/**
+!scripts/
+!scripts/**
+
 !*.md
-!*.msi
-!*.mst
-!*.png
-!*.ps1
-!*.psd1
-!*.psm1
 !LICENSE
-!admx
-!firefox
-!msedge
-!assets
-!bin
-!packages
-!scripts
-!make-msi
-!modules
-!ImportDotEnv
-!ZstArchive
-!Package
-!Source
-!7-Zip
-!Google Chrome
-!Orca
-!Uninstall Bloatware
-!Adobe Acrobat Reader
-!Microsoft Edge
-!Powershell 7
-!CMTrace
-!Microsoft WebView2
-!Quick Assist
-!Company Portal
-!Mozilla Firefox ESR
-!Template
+
+.env
+.DS_Store
+notes.txt
 
