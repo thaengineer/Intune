@@ -1,3 +1,5 @@
+#Requires -Version 5.1
+
 function Compress-Zst {
     param (
         [Parameter(Mandatory = $true, Position = 0)]
