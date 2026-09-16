@@ -5,16 +5,14 @@
 !*.cab
 !*.exe
 !*.ini
+!*.jpg
 !*.json
+!*.md
 !*.msi
 !*.mst
+!*.png
 !*.ps1
 !*.psd1
 !*.psm1
-
-!*.jpg
-!*.png
-
-!*.md
 !LICENSE
 
