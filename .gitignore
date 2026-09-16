@@ -24,6 +24,8 @@
 !scripts
 !make-msi
 !modules
+!ImportDotEnv
+!ZstArchive
 !Package
 !Source
 !7-Zip
